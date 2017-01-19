@@ -12,11 +12,11 @@ As data are the **critical** part in any data-science project, multiple run have
 
 The input images have the following dimensions: 160 x 320 x 3 pixels. In the first step we (1) crop images (pixels 16 to 144 are taken) vertically and (2) scale down images to 64 x 160 x 3 pixels. Notice that the **aspect ratio is conserved**. With this strategy RAM memory is saved without a significant impact on the performance.
 
-![Figure 1: original training data, no processing done. Image shapes are of 160 x 320 x 3 pixels.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/originalDS.png)
+![Figure 1: original training data, no processing done. Image shapes are of 160 x 320 x 3 pixels.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/images/originalDS.png)
 
 The main challenge of this data set is the huge level of unbalanced cases. Figure 2 shows the histogram depicting this issue. We see three particular normalized angles (-0.23, 0.0, and 0.23) that consume more than 80% of the training set (see figure below). Therefore, our primary task will be to get rid of these extreme skewness by (1) randomly removing cases with large frequencies, (2) add left/right camera images adding an extra angle to the actual steering, (3) using images with a throttle greater than a user-defined threshold, and finally (4) augmenting the data set by adding random shifts, modifying brightness, adding random shadows and modifying colors to existing images. Another filter used for this project is to use images that have a minimum amount of throttle (the rationale is that we do not want standing still images but actual driving actions). This amount is 0.25 normalized throttle (or more).
 
-![Figure 2: Histogram (256 bins) on one of the many batches of training data, showing how angles are distributed. It is clear that three angles are consuming more than the 80% of the total data samples.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/originalDataDistribution.png)
+![Figure 2: Histogram (256 bins) on one of the many batches of training data, showing how angles are distributed. It is clear that three angles are consuming more than the 80% of the total data samples.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/images/originalDataDistribution.png)
 
 A part from the standard driving and preprocess, a second stage of refinement was used. This refinement consists in recording small driving actions where the model fails in order to rectify the behavior. Let’s exemplify this in the training circuit: in the first versions of the modelling, the car tended to go through the off-road part of the track (so far this is fine), the problem was that it tended to crash in the final left curve for exiting the off-road part and reenter to the main road. To refine the data, multiple refinement recordings were done in this particular part of the track and inserted into the final data set.
 
@@ -28,33 +28,33 @@ The transformations done to the data set were the following:
 
 **Use of left and right cameras**. In order to obtain a richer data set, left and right camera images were used. As noted by Vivek, the original images were slightly rotated for telling the model to go to the center of the lane. A change of 0.25 in the normalized steering angle seems to correspond to approximately 6 degrees. This was determined empirically and later confirmed in Vivek's post. In this regard, left camera images were rotated 6 degrees and an amount of 0.25 were added to the steering angle, and right camera images were rotated -6 degrees and an amount of -0.25 were added to the steering angle.
 
-![Figure 3: Left and right cameras.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/processedDS.png)
+![Figure 3: Left and right cameras.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/images/processedDS.png)
 
 **Random brightness augmentation and reduction**. Directly taken from Vivek’s, it adds a brightness component to images. This way the model can train with different brightness levels, simulating from sunny days to dark evenings. This transformation is a very straightforward way for generalizing lightning conditions. It works as follows: given an input RGB image, it is transformed into HSV (hue, saturation, and value) color scheme and then a random uniform value is added to the value component, changing the brightness of the image. Also, a minimum threshold is set to avoid generating images with a very similar look to the original one.
  
-![Figure 4: Random brightness augmentation and reduction.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/processedDS_brightness.png)
+![Figure 4: Random brightness augmentation and reduction.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/images/processedDS_brightness.png)
 
 **Random image displacement**. Another direct way of augmenting the data consist in shifting the images vertically and horizontally, thus simulating movement towards left-right and up-down. The steering angle is modified accordingly. This transformation has been adapted from Vivek's version. The maximum amount of pixels to displace the image is a user-defined parameter used to control the displacement.
 
-![Figure 5: Random image displacement.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/processedDS_translations.png)
+![Figure 5: Random image displacement.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/images/processedDS_translations.png)
 
 **Random shadows**. As the training set does not have many large shadows, this transformation randomly adds dark patches to the input images. This way we allow the model to generalize in very different conditions. This transformation has been adapted from Vivek's one. Again, a minimum threshold is set to avoid generating images with a very similar look to the original one.
 
-![Figure 6: Random shadows.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/processedDS_shadows.png)
+![Figure 6: Random shadows.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/images/processedDS_shadows.png)
 
 **Random tone augmentation**. As color will change from one circuit to another (think for instance in the color of the road or in different atmosphere conditions), a nice way to increase the capacity of the car controller is to augment the data set by generating different color tones of the training data. This way, the model will see many different color conditions that will help in the generalization process. It works as follows: a small image (3 x 3 x 3) is generated and a solid color is randomly chosen. This image is called "filter". The filter will contain the new tone to be added to images. Afterwards, the original image is transformed into L\* a\* b\* color space and its mean per channel subtracted. Then, the mean tone of the filter is added to the image per channel. Finally, the image is transformed into RGB.
 
-![Figure 7: Random tone augmentation.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/processedDS_color.png)
+![Figure 7: Random tone augmentation.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/images/processedDS_color.png)
 
 **Random image flipping**. In order to generate more images with distinct angles, if the original steering angle is larger than a user-defined threshold, the image is flipped horizontally (that is: a mirror effect), and the angle is inverted. 
 
 **Random image rotation**. Similarly to image flipping, to generate new angles images are taken and a small random angle is added, thus rotating the image accordingly by a small amount. This way new cases are added to the data set.
 
-![Figure 8: Random tone augmentation.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/processedDS_rotations.png)
+![Figure 8: Random tone augmentation.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/images/processedDS_rotations.png)
 
 The results are summarized in the following histogram (256 bins), which contains 172,638 data samples with *all* angles. Notice that very high frequencies are randomly removed to avoid a possible bias.
 
-![Figure 9: Histogram of the augmented data set.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/figure_fullTrainAugmented.png)
+![Figure 9: Histogram of the augmented data set.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/images/figure_fullTrainAugmented.png)
 
 ## Modelling a human driver
 
@@ -64,7 +64,7 @@ The problem of modelling a human driver has attracted the attention of Machine L
 
 As useful data is limited (even with data augmentation), the car controller has to be simple enough for avoiding high bias (that is: overfitting) and at the same time deep enough for generalizing properly. Taking these restrictions into account, and after carefully reading Nvidia’s paper (https://devblogs.nvidia.com/parallelforall/deep-learning-self-driving-cars/) and Mishkin et al. paper (https://arxiv.org/abs/1606.02228), the final model resembles LeNet but adding some extra layers for improving the car's behavior. The model is depicted in what follows.
 
-![Figure 10: SimpLeNet architecture.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/SimpLeNet.png)
+![Figure 10: SimpLeNet architecture.](https://github.com/andreuSancho/P3-behavioral-cloning/blob/master/images/SimpLeNet.png)
 
 The **three** main parts are clearly depicted: (1) the **heading** of the network, which chooses the best color space, (2) the **main body** of the convnet, which is quite similar to LeNet, and (3) the **tailing** part, which performs the regression to predict the steering angle.
 
