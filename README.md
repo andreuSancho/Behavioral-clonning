@@ -68,11 +68,24 @@ As useful data is limited (even with data augmentation), the car controller has 
 
 The **three** main parts are clearly depicted: (1) the **heading** of the network, which chooses the best color space, (2) the **main body** of the convnet, which is quite similar to LeNet/VGGNet, and (3) the **tailing** part, which performs the regression to predict the steering angle.
 
-Notice that the Explonential Linear Unit (ELU) is extensively used as non-linearity --except for the first two (very) Leaky ReLU’s, with an alpha of 0.48 each. ELU's are a great non-linearity that perform competently in all kinds of scenarios. Mishkin et al. (2016) work recommend the use of such activation functions, which avoid the need of a much computationally expensive batch normalization process. Also note the extensive use of dropout layers. Experiments done with the herein presented data reflect the importance of having dropout layers as overfitting may be a serious issue in this problem. The value of 0.75 keep probability is the selected one. 
+Notice that the Explonential Linear Unit (ELU) is extensively used as non-linearity --except for the first two (very) Leaky ReLU’s, with an alpha of 0.3 each. ELU's are a great non-linearity that perform competently in all kinds of scenarios. Mishkin et al. (2016) work recommend the use of such activation functions, which avoid the need of a much computationally expensive batch normalization process. Also note the extensive use of dropout layers. Experiments done with the herein presented data reflect the importance of having dropout layers as overfitting may be a serious issue in this problem. The value of 0.75 keep probability is the selected one. 
 
 The number of units has been determined empirically following the simplicity / accuracy trade-off, and keeping overfitting as low as possible.
 
 Notice that SimpLeNet does not use fully connected layers. This way the model benefits of having less parameters while showing a similar performance. Notice that the we pass from about 1,500,000+ parameters using fully connected layers to about 719,300 parameters by using 1x1 convolutions and global average pooling, as suggested by Mishkin et al. paper (2016).
+
+In summary, the architecture follows the pattern: *[INPUT]->[CONV->LeakyReLU->CONV->LeakyReLU]->[CONV->ELU->CONV->ELU->MAXPOOLING->DROPOUT]{3}->[CONV->ELU->DROPOUT->CONV->ELU->FC]*. Notice that this pattern is the recommended in http://cs231n.github.io/convolutional-networks/.
+
+The total number of layers are:
+* 10 convolution layers (5x5, 3x3 and 1x1).
+* 1 fully connected layer (of 1 unit).
+* 2 Leaky ReLU layers.
+* 8 ELU layers.
+* 3 maxpooling layers (stride (2, 2)).
+* 1 global average pooling.
+* 4 dropout layers (0.25 dropot probability).
+
+In total 29 layers and 719,306 trainable parameters.
 
 ### The training process
 
