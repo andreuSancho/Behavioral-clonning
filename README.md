@@ -83,7 +83,7 @@ The total number of layers are:
 * 8 ELU layers.
 * 3 maxpooling layers (stride (2, 2)).
 * 1 global average pooling.
-* 4 dropout layers (0.25 dropot probability).
+* 4 dropout layers (0.25 **dropout** probability).
 
 In total 29 layers and 719,306 trainable parameters.
 
@@ -91,9 +91,9 @@ In total 29 layers and 719,306 trainable parameters.
 
 The training process followed the standard of data science: from the original data, 90% of it were used for training and the remaining 10% for testing using a **2-fold cross-validation** scheme. Also, an extra **validation set** was generated independently of the training/testing data (that is: using a new driving data), in which the important part is to determine how well the model identifies left, right and center cases. For simplicity, this validation data contains only three *extreme* cases: (1) an image of a very high angle towards left, (2) an image of a very high angle towards right, and (3) an image of a purely centered angle. This way, a rough estimate of the performance of the trained model is obtained.
 
-The model was trained for 150 epochs using the **Adam** optimizer. It was configured using the standard learning rate value of 0.0001 and a batch size of 800 images with the random shuffle activated to avoid biases. These values were obtained experimentally. Other optimizers were also tested (SGD and RMSprop), but the best results were obtained with Adam.
+The model was trained for 100 epochs using the **Adam** optimizer. It was configured using the standard learning rate value of 0.0001 and a batch size of 800 images with the random shuffle activated to avoid biases. These values were obtained experimentally. Other optimizers were also tested (SGD and RMSprop), but the best results were obtained with Adam.
 
-A Nvidia Geforce GTX 1070 was used for fitting the model, requiring roughly one hour of training in Debian 8 GNU/Linux distribution. The code was programed in Keras 1.20 (Python 3.x) using TensorFlow 0.12-rc0 as backend. 
+A Nvidia Geforce GTX 1070 was used for fitting the model, requiring roughly one hour of training in Debian 8 GNU/Linux distribution. The code was programed using Keras 1.20 (Python 3.x) using TensorFlow 0.12-rc0 as backend. 
 
 ## Discussion
 An end-to-end solution for autonomous driving has been developed and tested under a simulator. Being a complex task, the key insight lies in obtaining a good data set. This data set has to be large enough and contain as many distinct steering angles as possible for the model to generalize well. It is not an exaggeration to say that roughly 98% of the project is in the generation of the training set. The extreme skewness of the driving recordings has a huge impact on the model performance, no matter how complex the model is. Therefore, the principles of exploratory data analysis (in short: plot everything and focus on how data is distributed) were key to achieve good results.
