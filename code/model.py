@@ -74,7 +74,6 @@ def loadData(path_to_follow):
     for f in data_log['path']:
         img = mpimg.imread(f)
         img = img.astype('uint8')
-        #img = cv2.resize(img.copy(), (160, 64), interpolation=cv2.INTER_AREA) # Ensure it is 64x160x3!
         dataset.append(img)
         del img
     dataset = np.array(dataset)
@@ -154,13 +153,11 @@ def fitModel(train_set, train_labels, file_name, test_set, test_labels,
         It fits a model.
         :param train_set: is the training data tensor.
         :param train_labels: is the steering angle array.
-        :param n_classes: is the total number of classes.
         :param file_name: is the output name (with path) for the model.
         :param test_set: is the test set data tensor.
         :param test_labels: is the test output.
         :param validation_data: is the validation set data tensor.
         :param validation_steering: is the valiadtion output.
-        :param dropout_prob: is the probability of droping units.
         :param batch_size: is the size of the mini-batch.
         :param n_epoch: is the number of epoch to train the model.
         :param learning_rate: is the learning rate.
