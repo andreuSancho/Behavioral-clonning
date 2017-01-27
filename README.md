@@ -20,7 +20,7 @@ The main challenge of this data set is the huge level of unbalanced cases. Figur
 
 A part from the standard driving and preprocess, a second stage of refinement was used. This refinement consists in recording small driving actions where the model fails in order to rectify the behavior. Let's exemplify this in the training circuit: in the first versions of the modelling, the car tended to go through the off-road part of the track (so far this is fine), the problem was that it tended to crash in the final left curve for exiting the off-road part and reenter to the main road. To refine the data, multiple refinement recordings were done in this particular part of the track and inserted into the final data set.
 
-When recording the training data, different image resolutions (from 512 x 384 to 800 x 600) and different image quality settings were used. In this regard, it is important to highlight that most of the footage was recorded with the lowest quality settings. All the tests were done under 640 x 480 with the lowest quality settings.
+When recording the training data, different image resolutions (from 512 x 384 to 800 x 600) and different image quality settings were used. In this regard, it is important to highlight that most of the footage was recorded with the lowest quality settings. All the tests were done using a resolution of **640 x 480** with the **lowest quality** settings.
 
 ## Data augmentation
 
@@ -93,9 +93,9 @@ In total 24 layers and 133,226 trainable parameters.
 
 The training process followed the standard of data science: from the original data, 90% of it were used for training and the remaining 10% for testing using a **2-fold cross-validation** scheme. Also, an extra **validation set** was generated independently of the training/testing data (that is: using a new driving data), in which the important part is to determine how well the model identifies left, right and center cases. For simplicity, this validation data contains only three *extreme* cases: (1) an image of a very high angle towards left, (2) an image of a very high angle towards right, and (3) an image of a purely centered angle. This way, a rough estimate of the performance of the trained model is obtained.
 
-The model was trained for 100 epochs using the **Adam** optimizer. It was configured using the standard learning rate value of 0.0001 and a batch size of 500 images with the random shuffle activated to avoid biases. These values were obtained experimentally. Other optimizers were also tested (SGD and RMSprop), but the best results were obtained with Adam.
+The model was trained for 80 epochs using the **Adam** optimizer. It was configured using the standard learning rate value of 0.0001 and a batch size of 500 images with the random shuffle activated to avoid biases. These values were obtained experimentally. Other optimizers were also tested (SGD and RMSprop), but the best results were obtained with Adam.
 
-A Nvidia Geforce GTX 1070 with 8 gigs of RAM was used for fitting the model, requiring roughly one hour of training in Debian 8 GNU/Linux distribution. The code was programed using Keras 1.2.0 (Python 3.x) using TensorFlow 0.12-rc0 as backend. 
+A Nvidia Geforce GTX 1070 with 8 gigs of RAM was used for fitting the model, requiring roughly one hour of training in Debian 8 GNU/Linux distribution. The code was programed using Keras 1.2.0 (Python 3.4) using TensorFlow 0.12-rc0 as backend. 
 
 ### Results
 
@@ -105,6 +105,9 @@ The first video of the car controller driving in the training track (click to pl
 The interesting part happens in the test track: the car controller has never seen a single image of this track; the result is a generalization on the act of driving from the training track to this test track (click to play).
 
 [![Test track](https://img.youtube.com/vi/ujcVfq2qlzI/0.jpg)](https://youtu.be/ujcVfq2qlzI)
+
+## A comment on the code
+The code is distributed in four files: (1) the data preprocessing, (2) the data refinement, (3) the data augmentation, and (4) the model fitting. In order to execute the code for obtaining the same results one needs to follow this exact order. It was designed this way to analyze the outputs of the distinct stages of the project individually (this is especially critical with the data refinement stage). Some users rely on the Keras image generator, but was easy to debug and understand what was going on with this "staged" approach. 
 
 ## Discussion
 An end-to-end solution for autonomous driving has been developed and tested under a simulator. Being a complex task, the key insight lies in obtaining a good data set. This data set has to be large enough and contain as many distinct steering angles as possible for the model to generalize well. It is not an exaggeration to say that roughly 98% of the project is in the generation of the training set. The extreme skewness of the driving recordings has a huge impact on the model performance, no matter how complex the model is. Therefore, the principles of exploratory data analysis (in short: plot everything and focus on how data is distributed) were key to achieve good results.
