@@ -99,13 +99,12 @@ A Nvidia Geforce GTX 1070 with 8 gigs of RAM was used for fitting the model, req
 
 ### Results
 
-The first video of the car controller driving in the training track.
+The first video of the car controller driving in the training track (click to play).
+[![Training track](https://img.youtube.com/vi/gRTxOaWwEJA/0.jpg)](https://youtu.be/gRTxOaWwEJA)
 
-(https://youtu.be/gRTxOaWwEJA)
+The interesting part happens in the test track: the car controller has never seen a single image of this track; the result is a generalization on the act of driving from the training track to this test track (click to play).
 
-The interesting part happens in the test track: the car controller has never seen a single image of this track; the result is a generalization on the act of driving from the training track to this test track.
-
-(https://youtu.be/ujcVfq2qlzI)
+[![Test track](https://img.youtube.com/vi/ujcVfq2qlzI/0.jpg)](https://youtu.be/ujcVfq2qlzI)
 
 ## Discussion
 An end-to-end solution for autonomous driving has been developed and tested under a simulator. Being a complex task, the key insight lies in obtaining a good data set. This data set has to be large enough and contain as many distinct steering angles as possible for the model to generalize well. It is not an exaggeration to say that roughly 98% of the project is in the generation of the training set. The extreme skewness of the driving recordings has a huge impact on the model performance, no matter how complex the model is. Therefore, the principles of exploratory data analysis (in short: plot everything and focus on how data is distributed) were key to achieve good results.
